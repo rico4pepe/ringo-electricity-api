@@ -75,9 +75,16 @@ Class ElectricalPaymentService{
             curl_close($curl);
     
             if ($httpCode === 200) {
-                return json_decode($response, true);
+                $decodedResponse = json_decode($response, true);
+                
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    return $decodedResponse;
+                } else {
+                    throw new Exception("Failed to decode JSON response. Response: $response");
+                }
             } else {
-                throw new Exception("Failed to process payment. HTTP code: $httpCode");
+                throw new Exception("Failed to process payment. HTTP code: $httpCode. Response: $response");
             }
     }
 }
+
